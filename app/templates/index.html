@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="page-header">
+        <h1>Email form</h1>
+    </div>
+    <form action="{{url_for('index')}}" method="post" name="email">
+        <p>
+        <span>Email addresses (separated by comma, no space)</span>  <br>
+        {{ form.email_addresses(size=30, maxlength=50) }} <br>
+        </p>
+        <p>
+        <span>Subject</span> <br>
+        {{ form.subject(size=30, maxlength=50) }} <br>
+        </p>
+        <p>
+        <span>Message</span> <br>
+        {{ form.body(size=2000, maxlength=4000) }} <br>
+        </p>
+
+        <input type="submit" value="Go">
+        {{ form.csrf_token }}
+    </form>
+{% endblock %}

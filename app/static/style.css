@@ -1,0 +1,62 @@
+body {
+    margin: 10%;
+    background: #FCFEF5;
+    color: #901F0F;
+    font-family: "Arial", cursive;
+}
+
+#greetings {
+    color: #948979;
+    background: #DCFFDE;
+    padding: 1%;
+}
+
+.posts {
+    border: .1em dotted;
+    text-align: justify;
+    padding: 1% 5% 1% 5%;
+    margin: 0% 10% 0% 10%;
+}
+
+#login {
+    padding: 20px;
+    margin: 10px;
+    width: 350px;
+    background: #DCFFDE;
+    color: #901F0F;
+    border: 2px dashed #901F0F;
+    border-radius: 10px;
+}
+
+#login ul{
+    list-style-type: none;    
+}
+
+input {
+      -webkit-border-radius: 28px;
+  -moz-border-radius: 28px;
+  border-radius: 28px;
+    border-style: none;
+  color: #901F0F;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+    margin: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+#submit{
+  -webkit-border-radius: 28px;
+  -moz-border-radius: 28px;
+  border-radius: 28px;
+    border-style: none;
+  color: #901F0F;
+  font-size: 20px;
+  background: #C0C0C0;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+#submit:hover {
+    background: #901F0F;
+    color: #C0C0C0;
+}
+
