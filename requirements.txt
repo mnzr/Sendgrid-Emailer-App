@@ -29,7 +29,6 @@ factory-boy==2.3.1
 fake-factory==0.4.0
 flake8==2.1.0
 flask-wysiwyg==0.1
-flaskage==0.3
 ipython==1.2.1
 ipython-genutils==0.1.0
 itsdangerous==0.24
