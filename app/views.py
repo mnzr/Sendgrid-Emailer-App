@@ -30,11 +30,8 @@ def index():
     form = EmailForm()
 
     if form.validate_on_submit():
-        emails = form.email_addresses.data.split(',')
-        pprint.pprint(form.email_addresses.data, indent=4, depth=1)
-
         to = []
-        if form.email_addresses.data == '':
+        if form.email_upload.data.filename != '':
             filename = secure_filename(form.email_upload.data.filename)
             form.email_upload.data.save('uploads/' + filename)
             print("Uploaded file is: %s" % form.email_upload.data.filename)
@@ -47,12 +44,14 @@ def index():
                                 'type': 'to'
                               })
 
+        emails = form.email_addresses.data.split(',')
         for email in emails:
+            print(email)
             to.append({
                         'email': email,
                         'type': 'to'
                       })
-        print(form.email_upload.data)
+        print("Filename: %s" % form.email_upload.data.filename)
 
         message = {
             'from_email': FROM_MAIL,
