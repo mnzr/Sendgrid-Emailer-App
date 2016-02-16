@@ -2,7 +2,9 @@
 import pprint
 import rethinkdb as r
 import mandrill
+import csv
 from flask import render_template, url_for, request, g, redirect
+from werkzeug import secure_filename
 from .forms import EmailForm
 from config import *
 from app import app
@@ -29,16 +31,34 @@ def index():
 
     if form.validate_on_submit():
         emails = form.email_addresses.data.split(',')
-        pprint.pprint(emails, indent=4, depth=1)
+        pprint.pprint(form.email_addresses.data, indent=4, depth=1)
+
         to = []
+        if form.email_addresses.data == '':
+            filename = secure_filename(form.email_upload.data.filename)
+            form.email_upload.data.save('uploads/' + filename)
+            print("Uploaded file is: %s" % form.email_upload.data.filename)
+            with open('uploads/' + filename) as csvfile:
+                reader = csv.reader(csvfile)
+                emails = list(reader)
+                for email in emails:
+                    pprint.pprint(str(email))
+
+                    to.append({
+                                'email': email[0],
+                                'type': 'to'
+                              })
+
         for email in emails:
             to.append({
                         'email': email,
                         'type': 'to'
                       })
+
+
         message = {
-            'from_email': 'm@ratul.xyz',
-            'from_name': 'Example Name',
+            'from_email': FROM_MAIL,
+            'from_name': FROM_NAME,
             'to': to,
             'subject': form.subject.data,
             'html': form.body.data
