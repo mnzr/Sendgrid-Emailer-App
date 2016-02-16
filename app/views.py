@@ -42,8 +42,6 @@ def index():
                 reader = csv.reader(csvfile)
                 emails = list(reader)
                 for email in emails:
-                    pprint.pprint(str(email))
-
                     to.append({
                                 'email': email[0],
                                 'type': 'to'
@@ -54,7 +52,7 @@ def index():
                         'email': email,
                         'type': 'to'
                       })
-
+        print(form.email_upload.data)
 
         message = {
             'from_email': FROM_MAIL,
