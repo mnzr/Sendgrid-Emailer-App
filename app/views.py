@@ -45,12 +45,13 @@ def index():
                               })
 
         emails = form.email_addresses.data.split(',')
-        for email in emails:
-            print(email)
-            to.append({
-                        'email': email,
-                        'type': 'to'
-                      })
+        if form.email_addresses.data != '':
+            for email in emails:
+                print(email)
+                to.append({
+                            'email': email,
+                            'type': 'to'
+                          })
         print("Filename: %s" % form.email_upload.data.filename)
 
         message = {
