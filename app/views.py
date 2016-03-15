@@ -1,16 +1,17 @@
 # Views are where the routes are defined
 import pprint
+import json
 import rethinkdb as r
-import mandrill
-import csv
+import sendgrid
+# import csv
 from flask import render_template, url_for, request, g, redirect
-from werkzeug import secure_filename
-from .forms import EmailForm
+# from werkzeug import secure_filename
+from .forms import EmailForm, AddContactForm
 from config import *
 from app import app
 
 
-mandrill_client = mandrill.Mandrill('2HY5VR2aZMP5FAE06lYYig')
+sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 
 
 @app.before_request
@@ -31,6 +32,7 @@ def index():
 
     if form.validate_on_submit():
         to = []
+        """
         if form.email_upload.data.filename != '':
             filename = secure_filename(form.email_upload.data.filename)
             form.email_upload.data.save('uploads/' + filename)
@@ -43,7 +45,7 @@ def index():
                                 'email': email[0],
                                 'type': 'to'
                               })
-
+        """
         emails = form.email_addresses.data.split(',')
         if form.email_addresses.data != '':
             for email in emails:
@@ -99,6 +101,18 @@ def index():
 
 
 @app.route('/emails')
-def messages():
+def emails():
     messages = list(r.table(TABLE).run(g.db))
     return render_template('emails.html', messages=messages)
+
+
+@app.route('/contacts')
+def contacts():
+    current_lists = json.loads(sg.client.contactdb.lists.get().response_body)['lists']
+    pprint.pprint(current_lists, indent=4, depth=4)
+
+    form = AddContactForm()
+
+    if form.validate_on_submit():
+
+    return render_template('contacts.html', current_lists=current_lists)

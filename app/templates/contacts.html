@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <form id='addcontacts' action="{{url_for('contacts')}}" method="post" name="contacts_form" enctype="multipart/form-data">
+        <p>
+            <span>Add CSV file</span>  <br>
+            {{ form.csv}} <br>
+        </p>
+        <input type="submit" value="Send">
+        {{ form.csrf_token }}
+    </form>
+
+    <table class="table">
+    <thead>
+      <tr>
+        <th>List ID</th>
+        <th>Name</th>
+        <th>Recepients</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for list in current_lists %}
+      <tr>
+        <td>{{ list['id'] }}</td>
+        <td>{{ list['name'] }}</td>
+        <td>{{ list['recipient_count'] }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}

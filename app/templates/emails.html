@@ -1,6 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
+    <table class="table">
+    <thead>
+      <tr>
+        <th>To</th>
+        <th>Subject</th>
+      </tr>
+    </thead>
+    <tbody style="width:30%">
     {% for message in messages %}
-            {{ message }} <br>
+      <tr>
+        <td width="40%">
+            {% for to in message['to'] %}
+                <span>{{ to['email'] }}</span>
+            {% endfor %}
+        </td>
+        <td>{{ message['subject'] }}</td>
+      </tr>
     {% endfor %}
+    </tbody>
+    </table>
 {% endblock %}

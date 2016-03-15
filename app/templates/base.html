@@ -19,12 +19,12 @@
     <link href="{{ url_for('static', filename='bootstrap-wysiwyg/external/google-code-prettify/prettify.css') }}" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="{{ url_for('static', filename='bootstrap-wysiwyg/static/js/jquery.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='bootstrap-wysiwyg/external/jquery.hotkeys.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap-wysiwyg/external/jquery.hotkeys.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap-wysiwyg/static/js/bootstrap.min.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap-wysiwyg/external/google-code-prettify/prettify.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap-wysiwyg/bootstrap-wysiwyg.js') }}"></script>
     <script src="{{ url_for('static', filename='bootstrap-wysiwyg/static/js/plugin.js') }}"></script>
-    <title> Mandrill Mailer </title>
+    <title> Campaign Emailer and Visualizer</title>
 </head>
 <body>
     <nav class="navbar navbar-default">
@@ -34,7 +34,10 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="/">Mailer <span class="sr-only">(current)</span></a></li>
+                    <li><a href="/">Mailer</a></li>
+                    <li><a href="/emails">Sent Emails</a></li>
+                    <li><a href="/contacts">Contacts</a></li>
+                    <li><a href="/campaigns">Campaigns</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
