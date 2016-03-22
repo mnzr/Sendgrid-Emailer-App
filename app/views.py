@@ -6,7 +6,7 @@ import sendgrid
 # import csv
 from flask import render_template, url_for, request, g, redirect
 # from werkzeug import secure_filename
-from .forms import EmailForm, AddContactForm
+from .forms import EmailForm, AddContactForm, NewCampaignForm, TestForm
 from config import *
 from app import app
 
@@ -31,70 +31,8 @@ def index():
     form = EmailForm()
 
     if form.validate_on_submit():
-        to = []
-        """
-        if form.email_upload.data.filename != '':
-            filename = secure_filename(form.email_upload.data.filename)
-            form.email_upload.data.save('uploads/' + filename)
-            print("Uploaded file is: %s" % form.email_upload.data.filename)
-            with open('uploads/' + filename) as csvfile:
-                reader = csv.reader(csvfile)
-                emails = list(reader)
-                for email in emails:
-                    to.append({
-                                'email': email[0],
-                                'type': 'to'
-                              })
-        """
-        emails = form.email_addresses.data.split(',')
-        if form.email_addresses.data != '':
-            for email in emails:
-                print(email)
-                to.append({
-                            'email': email,
-                            'type': 'to'
-                          })
-        print("Filename: %s" % form.email_upload.data.filename)
-
-        message = {
-            'from_email': FROM_MAIL,
-            'from_name': FROM_NAME,
-            'to': to,
-            'subject': form.subject.data,
-            'html': form.body.data
-        }
-        pprint.pprint(message, indent=4, depth=1)
-        try:
-            result = mandrill_client.messages.send(message=message, async=False)
-            print(result)
-        except mandrill.Error, e:
-            # Mandrill errors are thrown as exceptions
-            print 'A mandrill error occurred: %s - %s' % (e.__class__, e)
-            # A mandrill error occurred: <class 'mandrill.UnknownSubaccountError'> - No subaccount exists with the id 'customer-123'
-            raise
-
-
-        r.db(DB).table(TABLE).insert(message).run(g.db)
-
-        return redirect(url_for('messages'))
-
-    """
-
-
-    if form.validate_on_submit():
-        message = {
-            'from_email': 'message.from_email@example.com',
-            'from_name': 'Example Name',
-            'to': to,
-            'subject': form.subject.data,
-            'html': form.body.data
-        }
-        pprint.pprint(message, indent=4, depth=1)
-
-        r.db(DB).table(TABLE).insert(message).run(g.db)
-
         return redirect(url_for('emails'))
-    """
+
     return render_template('index.html',
                            title='Home',
                            form=form)
@@ -106,13 +44,51 @@ def emails():
     return render_template('emails.html', messages=messages)
 
 
-@app.route('/contacts')
+@app.route('/contacts', methods=['GET', 'POST'])
 def contacts():
     current_lists = json.loads(sg.client.contactdb.lists.get().response_body)['lists']
-    pprint.pprint(current_lists, indent=4, depth=4)
-
     form = AddContactForm()
+    form.list_items.choices = [(lst['id'], lst['name']) for lst in current_lists]
 
     if form.validate_on_submit():
+        print(form.list_items.data)
+        data = {'sample': 'data'}
 
-    return render_template('contacts.html', current_lists=current_lists)
+        return redirect(url_for('contacts'))
+    # This is really handy during debugging
+    # print(form.errors)
+
+    ##################################################
+    # Add Multiple Recipients to a List #
+    # POST /contactdb/lists/{list_id}/recipients #
+    """
+    data = {'sample': 'data'}
+    params = {'list_id': 0}
+    list_id = "test_url_param"
+    response = sg.client.contactdb.lists._(list_id).recipients.post(request_body=data, query_params=params)
+    """
+    return render_template('contacts.html',
+                           # current_lists=current_lists,
+                           form=form)
+
+
+@app.route('/campaigns')
+def campaigns():
+    list_ids = [x['id'] for x in json.loads(sg.client.contactdb.lists.get().response_body)['lists']]
+    form = NewCampaignForm(list_ids)
+    return form.list_ids
+
+"""
+@app.route('/campaigns/<campaign_id>'):
+def campaigns():
+"""
+
+
+@app.route('/test', methods=['GET', 'POST'])
+def test():
+    form = TestForm()
+    if form.validate_on_submit():
+        print("Ha")
+        return redirect(url_for('index'))
+    return render_template('test.html',
+                           form=form)

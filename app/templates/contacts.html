@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-    <form id='addcontacts' action="{{url_for('contacts')}}" method="post" name="contacts_form" enctype="multipart/form-data">
+    <form id='contacts' action="{{url_for('contacts')}}" method="post" name="contacts_form" enctype="multipart/form-data">
+        <p>
+            <span>Select list name</span>  <br>
+            {{ form.list_items }} <br>
+        </p>
         <p>
             <span>Add CSV file</span>  <br>
             {{ form.csv}} <br>
@@ -8,7 +12,7 @@
         <input type="submit" value="Send">
         {{ form.csrf_token }}
     </form>
-
+    {#
     <table class="table">
     <thead>
       <tr>
@@ -27,4 +31,5 @@
     {% endfor %}
     </tbody>
     </table>
+#}
 {% endblock %}
