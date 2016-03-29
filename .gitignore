@@ -70,3 +70,6 @@ target/
 
 # PyCharm
 .idea/
+
+# Project files and folders
+uploads/*

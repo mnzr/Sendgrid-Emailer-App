@@ -39,11 +39,24 @@
                     <li><a href="/contacts">Contacts</a></li>
                     <li><a href="/campaigns">Campaigns</a></li>
                 </ul>
-            </div><!-- /.navbar-collapse -->
+            </div><!   /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
 
     <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {% for message in messages %}
+                  <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
         {% block content %} {% endblock %}
     </div>
 </body>

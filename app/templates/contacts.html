@@ -1,18 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
-    <form id='contacts' action="{{url_for('contacts')}}" method="post" name="contacts_form" enctype="multipart/form-data">
+    <form id='add_recipients' action="{{url_for('contacts')}}" method="post" name="add_recipients_form" enctype="multipart/form-data">
         <p>
             <span>Select list name</span>  <br>
-            {{ form.list_items }} <br>
+            {{ form_add_recipients.list_items }} <br>
         </p>
         <p>
             <span>Add CSV file</span>  <br>
-            {{ form.csv}} <br>
+            {{ form_add_recipients.csv}}
+            <input type="submit" value="Upload">
+            {{ form_add_recipients.csrf_token }}
         </p>
-        <input type="submit" value="Send">
-        {{ form.csrf_token }}
     </form>
-    {#
+    <hr>
+    <form id='add_lists' action="{{url_for('contacts')}}" method="post" name="add_lists_form" enctype="multipart/form-data">
+        <p>
+            <span>List name</span>  <br>
+            {{ form_add_list.list_name }} <br>
+        </p>
+        <input type="submit" value="Add new list">
+        {{ form_add_list.csrf_token }}
+    </form>
+    <hr>
+
     <table class="table">
     <thead>
       <tr>
@@ -31,5 +41,4 @@
     {% endfor %}
     </tbody>
     </table>
-#}
 {% endblock %}
