@@ -69,4 +69,4 @@ target/
 .python-version
 
 # PyCharm
-.idea
+.idea/
