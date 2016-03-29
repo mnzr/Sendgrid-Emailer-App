@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="page-header">
+        <h1>Campaigns</h1>
+    </div>
+    <div>
+        <a href="{{url_for('new_campaign')}}"><button type="button" class="btn btn-default">New Campaign</button></a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Campaign Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody style="width:30%">
+        {% for campaign in campaigns %}
+            <tr>
+                <td> <a href="{{url_for('campaigns')}}/{{ campaign['id'] }}" >{{ campaign['title'] }} </a> </td>
+                <td> {{ campaign['status'] }} </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="page-header">
+        <h1>New Campaigns</h1>
+    </div>
+    <script>
+        $(function(){
+            $("#new_campaign").wysiwygInput();
+        });
+    </script>
+{% if form.errors %}
+    {{ form.errors }}
+{% endif %}
+    <form id='new_campaign' action="{{url_for('new_campaign')}}" method="post" name="new_campaign" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+        <p>
+            <span>Campaign name</span>  <br>
+            {{ form.title }} <br>
+        </p>
+
+        <p>
+            <span>Subject</span>  <br>
+            {{ form.subject }} <br>
+        </p>
+
+        <p>
+            <span>Select list name</span>  <br>
+            {{ form.list_ids }} <br>
+        </p>
+
+        <p>
+            <span>HTML Content</span> <br>
+            {{ form.html_content(size=2000, maxlength=4000) }} <br>
+        </p>
+
+        <p>
+            <span>Plain content</span>  <br>
+            {{ form.plain_content(size=2000, maxlength=4000)}} <br>
+        </p>
+
+        <p>
+            <input type="submit" value="Create">
+        </p>
+    </form>
+{% endblock %}

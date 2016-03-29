@@ -17,15 +17,15 @@ class AddRecipientsForm(Form):
 
 
 class AddListForm(Form):
-    list_name = TextField('List name') # , choices=[], coerce=unicode, option_widget=None)
+    list_name = TextField('List name')  # , choices=[], coerce=unicode, option_widget=None)
 
 
 class NewCampaignForm(Form):
     title = StringField('Title')
     subject = StringField('Subject')
-    sender_id = StringField('Sender ID')
-    list_ids = SelectField('List IDs', choices=[])
-    suppression_group_id = 692,
+    sender_id = 23117  # StringField('Sender ID')
+    list_ids = SelectField('List IDs', coerce=int, choices=[])
+    suppression_group_id = 629,
     html_content = WysiwygField('HTML Content')
     plain_content = TextAreaField('Plain Content')
     custom_unsubscribe_url = "http://ratul.xyz"

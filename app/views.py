@@ -4,7 +4,7 @@ import json
 import rethinkdb as r
 import sendgrid
 import csv
-from flask import render_template, url_for, request, g, redirect, flash
+from flask import render_template, url_for, g, redirect, flash
 from werkzeug import secure_filename
 from .forms import EmailForm, AddRecipientsForm, NewCampaignForm, AddListForm
 from config import *
@@ -75,7 +75,6 @@ def contacts():
                         'last_name': row[2]
                     })
 
-
             response = sg.client.contactdb.recipients.post(request_body=request_body)
             pprint(json.loads(response.response_body), indent=4, depth=4)
             recipient_ids = json.loads(response.response_body)['persisted_recipients']
@@ -117,7 +116,6 @@ def contacts():
     response = sg.client.contactdb.lists._(list_id).recipients.post(request_body=data, query_params=params)
     """
     return render_template('contacts.html',
-                           # current_lists=current_lists,
                            form_add_recipients=form_add_recipients,
                            form_add_list=form_add_list,
                            current_lists=current_lists)
@@ -125,12 +123,42 @@ def contacts():
 
 @app.route('/campaigns')
 def campaigns():
-    list_ids = [x['id'] for x in json.loads(sg.client.contactdb.lists.get().response_body)['lists']]
-    form = NewCampaignForm(list_ids)
-    return form.list_ids
+    response = sg.client.campaigns.get()
+    response_body = json.loads(response.response_body)
+    all_campaigns = response_body['result']
+
+    # pprint([campaign['title'] for campaign in all_campaigns], indent=4, depth=4)
+
+    return render_template('campaigns.html',
+                           campaigns=all_campaigns)
 
 
-"""
-@app.route('/campaigns/<campaign_id>'):
-def campaigns():
-"""
+@app.route('/campaigns/new', methods=['GET', 'POST'])
+def new_campaign():
+    current_lists = json.loads(sg.client.contactdb.lists.get().response_body)['lists']
+    form = NewCampaignForm()
+    fetched_lists = [(lst['id'], lst['name']) for lst in current_lists]
+    if fetched_lists:
+        form.list_ids.choices = [(lst['id'], lst['name']) for lst in current_lists]
+    else:
+        form.list_ids.choices = [(0, "No item")]
+
+    if form.validate_on_submit():
+        request_body = {
+            "title": form.title.data,
+            "subject": form.subject.data,
+            "sender_id": form.sender_id,
+            "list_ids": form.list_ids.data,
+            "suppression_group_id": form.suppression_group_id,
+            "custom_unsubscribe_url": form.custom_unsubscribe_url,
+            "html_content": form.html_content.data,
+            "plain_content": form.plain_content.data
+        }
+
+        response = sg.client.campaigns.post(request_body=request_body)
+        pprint(response.response_body)
+        flash("Campaign created.")
+        return redirect(url_for('campaigns'))
+    return render_template('new_campaign.html',
+                           form=form,
+                           current_lists=current_lists)
