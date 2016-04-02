@@ -20,7 +20,9 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
-    g.db.close()
+    db = getattr(g, 'db', None)
+    if db is not None:
+        db.close()
 
 
 # Root for the test site
