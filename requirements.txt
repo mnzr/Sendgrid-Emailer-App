@@ -6,6 +6,7 @@ WTForms==2.1
 Werkzeug==0.11.4
 argparse==1.2.1
 flask-wysiwyg==0.1
+gunicorn==19.4.5
 itsdangerous==0.24
 python-http-client==1.2.3
 rethinkdb==2.2.0.post5
