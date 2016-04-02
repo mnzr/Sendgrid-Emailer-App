@@ -12,7 +12,7 @@ from app import app
 
 sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 
-
+"""
 @app.before_request
 def before_request():
     g.db = r.connect(host=HOST, port=PORT, db=DB)
@@ -20,9 +20,8 @@ def before_request():
 
 @app.teardown_request
 def teardown_request(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
+    g.db.close()
+"""
 
 
 # Root for the test site
@@ -41,8 +40,9 @@ def index():
 
 @app.route('/emails')
 def emails():
-    messages = list(r.table(TABLE).run(g.db))
-    return render_template('emails.html', messages=messages)
+    # messages = list(r.table(TABLE).run(g.db))
+    # return render_template('emails.html', messages=messages)
+    return render_template('emails.html')
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
