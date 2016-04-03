@@ -1,6 +1,8 @@
 # Views are where the routes are defined
 from pprint import pprint
 import json
+
+import os
 import rethinkdb as r
 import sendgrid
 import csv
@@ -59,14 +61,16 @@ def contacts():
     if form_add_recipients.validate_on_submit():
         if form_add_recipients.csv.data.filename != '':
             filename = secure_filename(form_add_recipients.csv.data.filename)
-            form_add_recipients.csv.data.save('uploads/' + filename)
+            uploads_directory = app.config['UPLOADS']
+            file_location = os.path.join(uploads_directory, filename)
+            form_add_recipients.csv.data.save(file_location)
             print("Uploaded file is: %s" % form_add_recipients.csv.data.filename)
 
             # The email contacts that will be uploaded
             request_body = []
             # [{'email': 'test@email.com'}, {'email': 'nottest@teemail.com'}]
             # Make the response_body
-            with open('uploads/' + filename) as csvfile:
+            with open(file_location) as csvfile:
                 reader = csv.reader(csvfile)
                 for row in reader:
                     if 'email' in row:
