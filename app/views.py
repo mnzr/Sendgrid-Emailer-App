@@ -8,7 +8,7 @@ import sendgrid
 import csv
 from flask import render_template, url_for, g, redirect, flash
 from werkzeug import secure_filename
-from .forms import EmailForm, AddRecipientsForm, NewCampaignForm, AddListForm
+from .forms import EmailForm, AddRecipientsForm, NewCampaignForm, AddListForm, CampaignPageForm
 from config import *
 from app import app
 
@@ -77,8 +77,8 @@ def contacts():
                         continue
                     request_body.append({
                         'email': row[0],
-                        'first_name': row[1],
-                        'last_name': row[2]
+                        'first_name': row[1] if row[1] is str else "",
+                        'last_name': row[2] if row[2] is str else ""
                     })
 
             response = sg.client.contactdb.recipients.post(request_body=request_body)
@@ -148,23 +148,51 @@ def new_campaign():
         form.list_ids.choices = [(lst['id'], lst['name']) for lst in current_lists]
     else:
         form.list_ids.choices = [(0, "No item")]
+        flash("You can not create any campaigns because you don't have any lists.")
 
     if form.validate_on_submit():
+        list_ids = [form.list_ids.data]
         request_body = {
             "title": form.title.data,
             "subject": form.subject.data,
             "sender_id": form.sender_id,
-            "list_ids": form.list_ids.data,
-            "suppression_group_id": form.suppression_group_id,
-            "custom_unsubscribe_url": form.custom_unsubscribe_url,
+            "list_ids": list_ids, # form.list_ids.data,
             "html_content": form.html_content.data,
             "plain_content": form.plain_content.data
         }
 
-        response = sg.client.campaigns.post(request_body=request_body)
-        pprint(response.response_body)
-        flash("Campaign created.")
-        return redirect(url_for('campaigns'))
+        if form.suppression_group_id is not None:
+            request_body.update({"suppression_group_id": form.suppression_group_id})
+        elif form.custom_unsubscribe_url is not None:
+            request_body.update({"custom_unsubscribe_url": form.custom_unsubscribe_url})
+
+        try:
+            response = sg.client.campaigns.post(request_body=request_body)
+            pprint(response.response_body)
+            flash("Campaign created.")
+        except Exception:
+            if form.errors:
+                print(form.errors)
+            flash("Error")
+            # return redirect(url_for('campaigns'))
+
     return render_template('new_campaign.html',
                            form=form,
                            current_lists=current_lists)
+
+@app.route('/campaigns/<campaign_id>', methods=['GET', 'POST'])
+def edit_campaign(campaign_id):
+    response = sg.client.campaigns._(campaign_id).get()
+    campaign = json.loads(response.response_body)
+    list_id = campaign['list_ids'][0]
+    print(list_id)
+    list_response = sg.client.contactdb.lists._(list_id).get()
+    list_details = json.loads(list_response.response_body)
+    list_name = list_details['name']
+    print(campaign)
+    schedule = CampaignPageForm()
+    return render_template('campaign_page.html',
+                           campaign=campaign,
+                           campaign_id=campaign_id,
+                           list_name=list_name,
+                           schedule=schedule)

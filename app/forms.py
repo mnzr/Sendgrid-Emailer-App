@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from flask.ext.wtf import Form
-from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField
+from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField, DateTimeField
+from wtforms_components import DateRange
 from flask_wysiwyg.wysiwyg import WysiwygField
 from flask_wtf.file import FileField
 
@@ -28,4 +31,14 @@ class NewCampaignForm(Form):
     suppression_group_id = 629,
     html_content = WysiwygField('HTML Content')
     plain_content = TextAreaField('Plain Content')
-    custom_unsubscribe_url = "http://ratul.xyz"
+    # custom_unsubscribe_url = "http://ratul.xyz"
+
+
+class CampaignPageForm(Form):
+    date = DateTimeField(
+        'Schedule',
+        validators=[DateRange(
+            min=datetime(2015, 1, 1),
+            max=datetime(2050, 10, 10)
+        )]
+    )
