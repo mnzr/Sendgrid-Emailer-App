@@ -11,6 +11,8 @@ from werkzeug import secure_filename
 from .forms import EmailForm, AddRecipientsForm, NewCampaignForm, AddListForm, CampaignPageForm
 from config import *
 from app import app
+from werkzeug.datastructures import MultiDict
+
 
 sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 

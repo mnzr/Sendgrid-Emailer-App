@@ -1,7 +1,9 @@
 from datetime import datetime
 
 from flask.ext.wtf import Form
-from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField, DateTimeField
+from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField
+
+from wtforms.fields.html5 import DateTimeField
 from wtforms_components import DateRange
 from flask_wysiwyg.wysiwyg import WysiwygField
 from flask_wtf.file import FileField
@@ -35,10 +37,4 @@ class NewCampaignForm(Form):
 
 
 class CampaignPageForm(Form):
-    date = DateTimeField(
-        'Schedule',
-        validators=[DateRange(
-            min=datetime(2015, 1, 1),
-            max=datetime(2050, 10, 10)
-        )]
-    )
+    date = DateTimeField(label='Date', format='%Y-%m-%d %H:%M')
