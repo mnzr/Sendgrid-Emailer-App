@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask.ext.wtf import Form
 from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField
-from wtforms.fields.html5 import DateTimeField
+from wtforms.fields.html5 import DateField, DateTimeField
 from wtforms_components import DateRange
 from flask_wysiwyg.wysiwyg import WysiwygField
 from flask_wtf.file import FileField
@@ -36,4 +36,5 @@ class NewCampaignForm(Form):
 
 
 class CampaignPageForm(Form):
-    date = DateTimeField(label='Date', format='%Y-%m-%d %H:%M')
+    # date = DateTimeField(label='Date', format='%Y-%m-%d %H:%M')
+    dt = DateField('DatePicker', format='%Y-%m-%d')
