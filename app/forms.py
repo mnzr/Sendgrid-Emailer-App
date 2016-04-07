@@ -2,7 +2,6 @@ from datetime import datetime
 
 from flask.ext.wtf import Form
 from wtforms import StringField, TextAreaField, SelectField, SelectMultipleField, TextField
-
 from wtforms.fields.html5 import DateTimeField
 from wtforms_components import DateRange
 from flask_wysiwyg.wysiwyg import WysiwygField

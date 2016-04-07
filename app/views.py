@@ -187,12 +187,15 @@ def edit_campaign(campaign_id):
     response = sg.client.campaigns._(campaign_id).get()
     campaign = json.loads(response.response_body)
     list_id = campaign['list_ids'][0]
-    print(list_id)
     list_response = sg.client.contactdb.lists._(list_id).get()
     list_details = json.loads(list_response.response_body)
     list_name = list_details['name']
-    print(campaign)
     schedule = CampaignPageForm()
+
+    if schedule.validate_on_submit():
+        print("Hi")
+        print(schedule.date.data)
+
     return render_template('campaign_page.html',
                            campaign=campaign,
                            campaign_id=campaign_id,
