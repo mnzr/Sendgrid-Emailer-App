@@ -77,11 +77,19 @@ def contacts():
                 for row in reader:
                     if 'email' in row:
                         continue
-                    request_body.append({
-                        'email': row[0],
-                        'first_name': row[1] if row[1] is str else "",
-                        'last_name': row[2] if row[2] is str else ""
-                    })
+                    else:
+                        request_body.append({
+                            'email': row[0]
+                        })
+                        if row[1] is not None:
+                            request_body.append({
+                                'first_name': row[1]
+                            })
+                        if row[2] is not None:
+                            request_body.append({
+                                'last_name': row[2]
+                            })
+
 
             response = sg.client.contactdb.recipients.post(request_body=request_body)
             pprint(json.loads(response.response_body), indent=4, depth=4)
