@@ -37,4 +37,4 @@ class NewCampaignForm(Form):
 
 class CampaignPageForm(Form):
     # date = DateTimeField(label='Date', format='%Y-%m-%d %H:%M')
-    dt = DateField('DatePicker', format='%Y-%m-%d')
+    dt = DateTimeField('DatePicker')
