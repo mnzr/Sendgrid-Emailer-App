@@ -185,7 +185,7 @@ def edit_campaign(campaign_id):
         request_body = {
             "send_at": send_at
         }
-        if campaign['status'] == 'Draft':
+        if campaign['s tatus'] == 'Draft':
             sg.client.campaigns._(campaign_id).schedules.post(request_body=request_body)
         elif campaign['status'] == 'Scheduled':
             sg.client.campaigns._(campaign_id).schedules.patch(request_body=request_body)

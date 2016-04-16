@@ -13,7 +13,7 @@
         </p>
     </form>
     <hr>
-    <form id='add_lists' action="{{url_for('contacts')}}" method="post" name="add_lists_form" enctype="multipart/form-data">
+    <form id='add_lists' action="{{url_for('lists')}}" method="post" name="add_lists_form" enctype="multipart/form-data">
         <p>
             <span>List name</span>  <br>
             {{ form_add_list.list_name }} <br>
