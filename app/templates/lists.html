@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+    {% if current_lists != [] %}
     <form id='add_recipients' action="{{url_for('lists')}}" method="post" name="add_recipients_form" enctype="multipart/form-data">
         <p>
             <span>Select list name</span>  <br>
@@ -12,6 +13,7 @@
             {{ form_add_recipients.csrf_token }}
         </p>
     </form>
+    {% endif %}
     <hr>
     <form id='add_lists' action="{{url_for('lists')}}" method="post" name="add_lists_form" enctype="multipart/form-data">
         <p>

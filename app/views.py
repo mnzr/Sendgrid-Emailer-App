@@ -31,10 +31,7 @@ def lists():
     form_add_recipients = AddRecipientsForm()
     form_add_list = AddListForm()
     fetched_lists = [(lst['id'], lst['name']) for lst in current_lists]
-    if fetched_lists:
-        form_add_recipients.list_items.choices = [(lst['id'], lst['name']) for lst in current_lists]
-    else:
-        form_add_recipients.list_items.choices = [(0, "No item")]
+    form_add_recipients.list_items.choices = [(lst['id'], lst['name']) for lst in current_lists]
 
     if form_add_recipients.validate_on_submit():
         if form_add_recipients.csv.data.filename != '':
