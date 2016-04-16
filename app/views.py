@@ -73,7 +73,7 @@ def lists():
             flash("Success! New email addresses will be added shortly.")
         else:
             flash("No file selected")
-        return redirect(url_for('contacts'))
+        return redirect(url_for('lists'))
 
     if form_add_list.validate_on_submit():
         print("Trying to add " + form_add_list.list_name.data)
