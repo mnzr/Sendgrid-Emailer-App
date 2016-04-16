@@ -1,56 +1,32 @@
-# Views are where the routes are defined
+"""
+TODO:
+- If there is no list, then user shouldn't be able to create campaigns
+
+
+
+"""
+
 from pprint import pprint
 import json
-
 import os
-import rethinkdb as r
 import sendgrid
 import csv
-from flask import render_template, url_for, g, redirect, flash
+from datetime import datetime  # , timedelta
+from time import mktime
+from flask import render_template, url_for, redirect, flash, request
 from werkzeug import secure_filename
-from .forms import EmailForm, AddRecipientsForm, NewCampaignForm, AddListForm, CampaignPageForm
+from .forms import AddRecipientsForm, NewCampaignForm, AddListForm, CampaignPageForm
+from flask.ext.wtf import Form
+
 from config import *
 from app import app
-from werkzeug.datastructures import MultiDict
 
 
 sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 
-"""
-@app.before_request
-def before_request():
-    g.db = r.connect(host=HOST, port=PORT, db=DB)
 
-
-@app.teardown_request
-def teardown_request(exception):
-    g.db.close()
-"""
-
-
-# Root for the test site
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-def index():
-    form = EmailForm()
-
-    if form.validate_on_submit():
-        return redirect(url_for('emails'))
-
-    return render_template('index.html',
-                           title='Home',
-                           form=form)
-
-
-@app.route('/emails')
-def emails():
-    # messages = list(r.table(TABLE).run(g.db))
-    # return render_template('emails.html', messages=messages)
-    return render_template('emails.html')
-
-
-@app.route('/contacts', methods=['GET', 'POST'])
-def contacts():
+@app.route('/lists', methods=['GET', 'POST'])
+def lists():
     current_lists = json.loads(sg.client.contactdb.lists.get().response_body)['lists']
     form_add_recipients = AddRecipientsForm()
     form_add_list = AddListForm()
@@ -71,6 +47,7 @@ def contacts():
             # The email contacts that will be uploaded
             request_body = []
             # [{'email': 'test@email.com'}, {'email': 'nottest@teemail.com'}]
+
             # Make the response_body
             with open(file_location) as csvfile:
                 reader = csv.reader(csvfile)
@@ -90,13 +67,12 @@ def contacts():
                                 'last_name': row[2]
                             })
 
-
             response = sg.client.contactdb.recipients.post(request_body=request_body)
             pprint(json.loads(response.response_body), indent=4, depth=4)
             recipient_ids = json.loads(response.response_body)['persisted_recipients']
             # Adding recipients to the list selected
             list_id = form_add_recipients.list_items.data
-            response = sg.client.contactdb.lists._(list_id).recipients.post(request_body=recipient_ids)
+            sg.client.contactdb.lists._(list_id).recipients.post(request_body=recipient_ids)
             flash("Success! New email addresses will be added shortly.")
         else:
             flash("No file selected")
@@ -122,21 +98,13 @@ def contacts():
     # This is really handy during debugging
     # print(form.errors)
 
-    ##################################################
-    # Add Multiple Recipients to a List #
-    # POST /contactdb/lists/{list_id}/recipients #
-    """
-    data = {'sample': 'data'}
-    params = {'list_id': 0}
-    list_id = "test_url_param"
-    response = sg.client.contactdb.lists._(list_id).recipients.post(request_body=data, query_params=params)
-    """
-    return render_template('contacts.html',
+    return render_template('lists.html',
                            form_add_recipients=form_add_recipients,
                            form_add_list=form_add_list,
                            current_lists=current_lists)
 
 
+@app.route('/')
 @app.route('/campaigns')
 def campaigns():
     response = sg.client.campaigns.get()
@@ -162,11 +130,12 @@ def new_campaign():
 
     if form.validate_on_submit():
         list_ids = [form.list_ids.data]
+        print(list_ids)
         request_body = {
             "title": form.title.data,
             "subject": form.subject.data,
             "sender_id": form.sender_id,
-            "list_ids": list_ids, # form.list_ids.data,
+            "list_ids": list_ids,  # form.list_ids.data,
             "html_content": form.html_content.data,
             "plain_content": form.plain_content.data
         }
@@ -190,19 +159,37 @@ def new_campaign():
                            form=form,
                            current_lists=current_lists)
 
-@app.route('/campaigns/<campaign_id>', methods=['GET', 'POST'])
+
+@app.route('/campaigns/<campaign_id>', methods=['GET', 'POST', 'PATCH'])
 def edit_campaign(campaign_id):
     response = sg.client.campaigns._(campaign_id).get()
     campaign = json.loads(response.response_body)
-    list_id = campaign['list_ids'][0]
-    list_response = sg.client.contactdb.lists._(list_id).get()
-    list_details = json.loads(list_response.response_body)
-    list_name = list_details['name']
-    schedule = CampaignPageForm()
+    list_name = None
+    try:
+        list_id = campaign['list_ids'][0]
+        list_response = sg.client.contactdb.lists._(list_id).get()
+        list_details = json.loads(list_response.response_body)
+        list_name = list_details['name']
+    except IndexError:
+        list_id = 'null'
+        list_name = "No list selected"
+
+    schedule = Form()
 
     if schedule.validate_on_submit():
-        print("Hi")
-        print(schedule.date.data)
+        date_unicode = request.form['datetime']
+        schedule = datetime.strptime(date_unicode, '%Y-%m-%dT%H:%M')
+
+        send_at = int(mktime(schedule.timetuple()))
+        print(send_at)
+        request_body = {
+            "send_at": send_at
+        }
+        if campaign['status'] == 'Draft':
+            sg.client.campaigns._(campaign_id).schedules.post(request_body=request_body)
+        elif campaign['status'] == 'Scheduled':
+            sg.client.campaigns._(campaign_id).schedules.patch(request_body=request_body)
+        flash("The campaign has been scheduled.")
 
     return render_template('campaign_page.html',
                            campaign=campaign,

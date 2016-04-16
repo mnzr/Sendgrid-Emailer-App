@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <form id='add_recipients' action="{{url_for('contacts')}}" method="post" name="add_recipients_form" enctype="multipart/form-data">
+    <form id='add_recipients' action="{{url_for('lists')}}" method="post" name="add_recipients_form" enctype="multipart/form-data">
         <p>
             <span>Select list name</span>  <br>
             {{ form_add_recipients.list_items }} <br>
