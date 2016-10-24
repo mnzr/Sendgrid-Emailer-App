@@ -71,5 +71,8 @@ target/
 # PyCharm
 .idea/
 
+# Node
+bower_components
+
 # Project
 config.py
